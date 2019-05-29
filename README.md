@@ -36,6 +36,13 @@ proxy-checker makes a bunch of calls to an API and reports which succeed and whi
 exit status 2
 ```
 
+### Library
+
+You can import the `proxychecker` library for access to its internals.
+
+You can run `proxychecker/proxycheckercmd.Main()` to run the top-level
+command line program from your own app.
+
 ## Simple Example
 
 We can grab a free proxy IPs from https://free-proxy-list.net/,
