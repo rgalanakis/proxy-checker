@@ -37,10 +37,11 @@ func (c Checker) CheckProxies() (ProxyResults, error) {
 	semaphore := make(chan struct{}, c.Cfg.Concurrency)
 	for i := range proxies {
 		go func(i int) {
-			defer c.done()
+			defer c.waitGroup.Done()
 			semaphore <- struct{}{}
-			time.Sleep(c.Cfg.Sleep)
 			results[i] = c.CheckProxy(Proxy(proxies[i]))
+			c.done(results[i])
+			time.Sleep(c.Cfg.Sleep)
 			<-semaphore
 		}(i)
 	}
@@ -49,8 +50,13 @@ func (c Checker) CheckProxies() (ProxyResults, error) {
 	return results, nil
 }
 
-func (c Checker) done() {
-	c.waitGroup.Done()
+func (c Checker) done(res ProxyResult) {
+	if c.Cfg.Realtime {
+		c.mutex.Lock()
+		defer c.mutex.Unlock()
+		fmt.Println(res)
+		return
+	}
 	nowDone := atomic.AddInt64(c.doneCount, 1)
 	if nowDone%6 == 5 {
 		c.mutex.Lock()

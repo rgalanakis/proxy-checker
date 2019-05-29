@@ -27,6 +27,8 @@ proxy-checker makes a bunch of calls to an API and reports which succeed and whi
     	Password for the proxy service being tested
   -proxy-user string
     	Username for the proxy service being tested
+  -realtime
+    	Print results as they come in, rather than sorted at the end
   -sleep int
     	Milliseconds to sleep between proxy checks. Certain proxies may rate-limit a source IP to prevent DDoS. (default 1000)
   -trace
@@ -49,8 +51,11 @@ We can grab a free proxy IPs from https://free-proxy-list.net/,
 and see if it's blocked by the site in question:
 
 ```sh
-echo "217.23.69.146:8080" | go run main.go -trace -url='https://robg3d.com'
+printf "217.23.69.146:8080\n54.189.50.117:3121\n" | go run main.go -url='https://robg3d.com'
 ```
+
+If you are debugging some weird behavior in proxies,
+you should use the `-realtime` and `-trace` flags.
 
 ## Complex Example
 

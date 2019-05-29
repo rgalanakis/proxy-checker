@@ -21,6 +21,7 @@ type Config struct {
 	ProxyUser       string
 	ProxyPass       string
 	ParseIP         func(*http.Response, string) (ip string)
+	Realtime        bool
 	Concurrency     int
 	Proxies         []string
 	Sleep           time.Duration
@@ -42,6 +43,8 @@ func ParseConfig(flag *flag.FlagSet) (Config, error) {
 	pass := flag.String("proxy-pass", "", "Password for the proxy service being tested")
 	parserName := flag.String("ip-parser", "body",
 		"Name of the parser to use ('body' is only choice right now)")
+	realtime := flag.Bool("realtime", false,
+		"Print results as they come in, rather than sorted at the end")
 	concurrecy := flag.Int(
 		"concurrency", 2,
 		"Max number of proxies to try simultaneously. "+
@@ -70,6 +73,7 @@ func ParseConfig(flag *flag.FlagSet) (Config, error) {
 		Concurrency:     *concurrecy,
 		Proxies:         readProxiesFromStdin(),
 		Sleep:           time.Millisecond * time.Duration(*sleep),
+		Realtime:        *realtime,
 	}
 
 	if len(cfg.Proxies) > *max {

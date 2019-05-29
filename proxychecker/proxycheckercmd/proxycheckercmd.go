@@ -24,9 +24,12 @@ func Main() {
 		os.Exit(1)
 	}
 
-	sort.Sort(results)
-	for _, r := range results {
-		fmt.Println(r)
+	if !cfg.Realtime {
+		sort.Sort(results)
+		for _, r := range results {
+			fmt.Println(r)
+		}
 	}
+
 	os.Exit(0)
 }
