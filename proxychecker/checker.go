@@ -79,9 +79,15 @@ func (c Checker) CheckProxy(proxy Proxy) (result ProxyResult) {
 	resp, err := c.newClient(proxy).Do(req)
 	// If the proxy is bad, we get a 307, but we don't have a strong reference to the error.
 	// So we need to check its error string...
-	if uerr, ok := err.(*url.Error); ok && uerr.Err.Error() == http.StatusText(http.StatusProxyAuthRequired) {
-		result.State = ProxyInvalid
-		return
+	if uerr, ok := err.(*url.Error); ok {
+		if uerr.Err.Error() == http.StatusText(http.StatusProxyAuthRequired) {
+			result.State = ProxyInvalid
+			return
+		}
+		if uerr.Timeout() {
+			result.State = Timeout
+			return
+		}
 	}
 	if err != nil {
 		return result.SetError(err)
@@ -111,6 +117,7 @@ func (c Checker) CheckProxy(proxy Proxy) (result ProxyResult) {
 
 func (c Checker) newClient(proxy Proxy) *http.Client {
 	return &http.Client{
+		Timeout: c.Cfg.Timeout,
 		Transport: &http.Transport{
 			Proxy: func(req *http.Request) (*url.URL, error) {
 				config := &httpproxy.Config{HTTPProxy: string(proxy)}

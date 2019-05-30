@@ -31,11 +31,12 @@ proxy-checker makes a bunch of calls to an API and reports which succeed and whi
     	Print results as they come in, rather than sorted at the end
   -sleep int
     	Milliseconds to sleep between proxy checks. Certain proxies may rate-limit a source IP to prevent DDoS. (default 1000)
+  -timeout int
+    	Milliseconds to wait before timing out a proxy check. (default 1000)
   -trace
     	Enable http tracing to help debug what is going on
   -url string
     	URL to check (default "https://google.com")
-exit status 2
 ```
 
 ### Library

@@ -25,6 +25,7 @@ type Config struct {
 	Concurrency     int
 	Proxies         []string
 	Sleep           time.Duration
+	Timeout         time.Duration
 }
 
 func ParseConfig(flag *flag.FlagSet) (Config, error) {
@@ -56,6 +57,9 @@ func ParseConfig(flag *flag.FlagSet) (Config, error) {
 		"sleep", 1000,
 		"Milliseconds to sleep between proxy checks. "+
 			"Certain proxies may rate-limit a source IP to prevent DDoS.")
+	timeout := flag.Int(
+		"timeout", 5000,
+		"Milliseconds to wait before timing out a proxy check.")
 
 	err := flag.Parse(os.Args[1:])
 	if err != nil {
@@ -73,6 +77,7 @@ func ParseConfig(flag *flag.FlagSet) (Config, error) {
 		Concurrency:     *concurrecy,
 		Proxies:         readProxiesFromStdin(),
 		Sleep:           time.Millisecond * time.Duration(*sleep),
+		Timeout:         time.Millisecond * time.Duration(*timeout),
 		Realtime:        *realtime,
 	}
 

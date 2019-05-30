@@ -12,6 +12,7 @@ type ProxyResultState int
 const (
 	Unknown ProxyResultState = iota
 	ProxyInvalid
+	Timeout
 	Error
 	Forbidden
 	Success
@@ -20,6 +21,9 @@ const (
 func (st ProxyResultState) String() string {
 	if st == ProxyInvalid {
 		return "invalid proxy"
+	}
+	if st == Timeout {
+		return "timeout"
 	}
 	if st == Error {
 		return "error"
